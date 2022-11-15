@@ -1,6 +1,6 @@
 const http = require('http');
 const fs = require('fs');
-const ejs = require('ejs');
+const ejs = require('ejs'); // npm install ejs
 
 // ファイル
 const index_page = fs.readFileSync('./index.ejs', 'utf8')
