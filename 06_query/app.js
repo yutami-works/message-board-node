@@ -52,7 +52,7 @@ function getFromClient(request, response) {
             break;
 
         default:
-            response.writeHead(200, {'Content-Type': 'text/css'});
+            response.writeHead(200, {'Content-Type': 'text/plain'});
             response.end('no page...');
             break;
     }
