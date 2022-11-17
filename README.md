@@ -1,3 +1,3 @@
-# node-app_sample
+# NodeJS_sample
 
 Node.jsのWebアプリケーションサンプル
