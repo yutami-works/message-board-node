@@ -1,0 +1,11 @@
+<!--見出しはidとkey（名前）、keyごとのvalをループで並べる-->
+<table class="table table-dark">
+    <tr>
+        <th><%= id %>:<%= key %></th>
+    </tr>
+    <% for(var i in val){ %>
+    <tr>
+        <td><%= val[i] %></td>
+    </tr>
+    <% } %>
+</table>
