@@ -92,7 +92,7 @@ function write_index(request, response) {
     response.end();
 }
 
-// テキストファイルをダウンロード
+// テキストファイルからメッセージデータ読み込み
 function readFromFile(fname) {
     fs.readFile(fname, 'utf8', (err, data) => {
         message_data = data.split('\n');
