@@ -45,7 +45,12 @@ $ cd <1で作成したフォルダ>
 $ npm init
 ```
 
-#### 4.アプリケーションの実行
+#### 4.Expressのインストール
+```shell
+$ npm install express
+```
+
+#### 5.アプリケーションの実行
 index.jsを作成した後
 ```shell
 $ node index.js
