@@ -7,13 +7,13 @@ const port = 3000;
 const server = http.createServer(getFromClient);
 
 server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 // ここまでメインプログラム========
 
 // createServerの処理
-function getFromClient(req, res) {
+const getFromClient = (req, res) => {
     request = req;
     response = res;
     fs.readFile('./index.html', 'UTF-8',
