@@ -10,14 +10,14 @@ const hostname = '127.0.0.1'; // localhost
 const port = 3000;
 
 // createServerの処理
-function getFromClient(request, response) {
+const getFromClient = (req, res) => {
   var content = ejs.render(index_page, {
     title: "Indexページ",
     message: "これはテンプレートを使ったサンプルページです。",
   });
-  response.writeHead(200, {'Content-Type': 'text/html'});
-  response.write(content);
-  response.end();
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write(content);
+  res.end();
 }
 
 const server = http.createServer(getFromClient);
