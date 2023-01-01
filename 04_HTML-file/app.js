@@ -11,7 +11,7 @@ const getFromClient = (req, res) => {
     res.write(data);
     res.end();
   });
-}
+};
 
 const server = http.createServer(getFromClient);
 
