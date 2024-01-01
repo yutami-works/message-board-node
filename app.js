@@ -1,5 +1,6 @@
 // モジュールのロード
 const http = require('node:http');
+const fs = require('node:fs');
 
 // サーバー情報定義
 const hostname = '127.0.0.1';
@@ -7,9 +8,11 @@ const port = 3000;
 
 // サーバー作成（アクセス時の処理をコールバック関数として渡しておく）
 const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+  fs.readFile('./index.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 });
 
 // サーバー待ち受け
