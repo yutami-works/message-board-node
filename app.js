@@ -6,14 +6,17 @@ const fs = require('node:fs');
 const hostname = '127.0.0.1';
 const port = 3000;
 
-// サーバー作成（アクセス時の処理をコールバック関数として渡しておく）
-const server = http.createServer((req, res) => {
+// アクセス時のコールバック関数
+const getFromClient = (req, res) => {
   fs.readFile('./index.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
   });
-});
+}
+
+// サーバー作成
+const server = http.createServer(getFromClient);
 
 // サーバー待ち受け
 server.listen(port, hostname, () => {
