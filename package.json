@@ -1,0 +1,14 @@
+{
+  "name": "message-board-node",
+  "version": "1.0.0",
+  "description": "フレームワーク無しで作る[Node.js](https://nodejs.org/en)の基本アプリケーション。",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9"
+  }
+}
