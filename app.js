@@ -2,7 +2,6 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const ejs = require('ejs');
-const url = require('node:url');
 
 // サーバー情報定義
 const hostname = '127.0.0.1';
@@ -10,21 +9,24 @@ const port = 3000;
 
 // ファイル読み込み
 const indexPage = fs.readFileSync('./index.ejs', 'utf-8');
+const otherPage = fs.readFileSync('./other.ejs', 'utf-8');
 const styleCss = fs.readFileSync('./style.css', 'utf-8');
 
-// ルーティング関数（アクセスしてきたパスによって後続処理を分岐）
-const appRouter = (req, res) => {
+// コールバック関数（サーバーにアクセスした際に返されるメインアプリ）
+const appCallback = (req, res) => {
   // リクエストURLを解析
   const urlParts = new URL(req.url, `http://${req.headers.host}`); // url.parse()はレガシー
   const path = urlParts.pathname;
 
-  // パスで分岐
+  let content = '';
+
+  // パスでルーティング
   switch (path) {
     case '/':
       // テンプレートに値をレンダリング
-      const content = ejs.render(indexPage, {
-        title: 'indexページ',
-        content: 'これはテンプレートのサンプルページです。'
+      content = ejs.render(indexPage, {
+        title: 'Index',
+        content: 'これはIndexページです。'
       });
 
       // レスポンス
@@ -33,15 +35,26 @@ const appRouter = (req, res) => {
       res.end();
       break;
 
+    case '/other':
+      content = ejs.render(otherPage, {
+        title: 'Other',
+        content: 'これはOtherページです。'
+      });
+
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(content);
+      res.end();
+      break;
+
+    // CSSも静的ファイルのルーティングが必要
     case '/style.css':
-      // CSSも静的ファイルのルーティングが必要
       res.writeHead(200, {'Content-Type': 'text/css'});
       res.write(styleCss);
       res.end();
       break;
 
+    // 全てのケースに合致しなければ存在しないパスという判定
     default:
-      // 全てのケースに合致しなければ存在しないパスという判定
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/plain');
       res.end('no page...');
@@ -50,7 +63,7 @@ const appRouter = (req, res) => {
 }
 
 // サーバー作成
-const server = http.createServer(appRouter);
+const server = http.createServer(appCallback);
 
 // サーバー待ち受け
 server.listen(port, hostname, () => {
