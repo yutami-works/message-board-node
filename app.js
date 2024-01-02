@@ -18,15 +18,28 @@ const appCallback = (req, res) => {
   const urlParts = new URL(req.url, `http://${req.headers.host}`); // url.parse()はレガシー
   const path = urlParts.pathname;
 
+  // クエリパラメータを取得
+  const query = urlParts.searchParams;
+
+  // 画面生成用変数
   let content = '';
 
   // パスでルーティング
   switch (path) {
     case '/':
+      // デフォルトのコンテンツを定義
+      content = 'これはIndexページです。';
+
+      // クエリのmsgがある場合はコンテンツに追加
+      const msg = query.get('msg');
+      if (msg != undefined) {
+        content += `あなたは「${msg}」と送りました。`;
+      }
+
       // テンプレートに値をレンダリング
       content = ejs.render(indexPage, {
         title: 'Index',
-        content: 'これはIndexページです。'
+        content: content
       });
 
       // レスポンス
