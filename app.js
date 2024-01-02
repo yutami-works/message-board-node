@@ -1,6 +1,7 @@
 // モジュールのロード
 const http = require('node:http');
 const fs = require('node:fs');
+const querystring = require('node:querystring');
 const ejs = require('ejs');
 
 // サーバー情報定義
@@ -12,51 +13,79 @@ const indexPage = fs.readFileSync('./index.ejs', 'utf-8');
 const otherPage = fs.readFileSync('./other.ejs', 'utf-8');
 const styleCss = fs.readFileSync('./style.css', 'utf-8');
 
-// コールバック関数（サーバーにアクセスした際に返されるメインアプリ）
-const appCallback = (req, res) => {
+/* indexアクセス時の処理関数 */
+const responseIndex = (req, res) => {
+  const msg = 'これはIndexページです。';
+
+  // コンテンツレンダリング
+  const content = ejs.render(indexPage, {
+    title: 'Index',
+    content: msg
+  });
+
+  // レスポンス
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write(content);
+  res.end();
+}
+
+/* otherアクセス時の処理関数 */
+const responseOther = (req, res) => {
+  let msg = 'これはOtherページです。';
+
+  // POSTアクセス時の処理
+  if (req.method == 'POST') {
+    let body = '';
+
+    // データ受信のイベント処理
+    req.on('data', (data) => {
+      body += data;
+    });
+
+    // データ受信終了のイベント処理
+    req.on('end', () => {
+      // データのパース
+      const postData = querystring.parse(body);
+      msg += `あなたは「${postData.msg}」と書きました。`;
+
+      const content = ejs.render(otherPage, {
+        title: 'Other',
+        content: msg
+      });
+
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(content);
+      res.end();
+    });
+  } else {
+    // GETアクセス時の処理
+    const msg = 'ページがありません。';
+    const content = ejs.render(otherPage, {
+      title: 'Other',
+      content: msg
+    });
+
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(content);
+    res.end();
+  }
+}
+
+/* ルーティング関数（サーバーにアクセスした際に返されるコールバック関数）*/
+const appRouter = (req, res) => {
   // リクエストURLを解析
   const urlParts = new URL(req.url, `http://${req.headers.host}`); // url.parse()はレガシー
   const path = urlParts.pathname;
-
-  // クエリパラメータを取得
-  const query = urlParts.searchParams;
-
-  // 画面生成用変数
-  let content = '';
+  //const query = urlParts.searchParams; // クエリパラメータを取得する場合
 
   // パスでルーティング
   switch (path) {
     case '/':
-      // デフォルトのコンテンツを定義
-      content = 'これはIndexページです。';
-
-      // クエリのmsgがある場合はコンテンツに追加
-      const msg = query.get('msg');
-      if (msg != undefined) {
-        content += `あなたは「${msg}」と送りました。`;
-      }
-
-      // テンプレートに値をレンダリング
-      content = ejs.render(indexPage, {
-        title: 'Index',
-        content: content
-      });
-
-      // レスポンス
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.write(content);
-      res.end();
+      responseIndex(req, res);
       break;
 
     case '/other':
-      content = ejs.render(otherPage, {
-        title: 'Other',
-        content: 'これはOtherページです。'
-      });
-
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.write(content);
-      res.end();
+      responseOther(req, res);
       break;
 
     // CSSも静的ファイルのルーティングが必要
@@ -76,7 +105,7 @@ const appCallback = (req, res) => {
 }
 
 // サーバー作成
-const server = http.createServer(appCallback);
+const server = http.createServer(appRouter);
 
 // サーバー待ち受け
 server.listen(port, hostname, () => {
